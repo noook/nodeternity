@@ -29,21 +29,21 @@ function test(): void {
 
 let count = 0;
 
-function run(seconds: number) {
+function run(seconds: number): Promise<number> {
   return new Promise(resolve => {
     const microtime = Date.now() / 1000;
     while ((Date.now() / 1000) - microtime < seconds) {
       test();
       count += 1;
     }
-    resolve();
+    resolve(seconds);
   });
 }
 
 run(60)
-  .then(() => {
+  .then((seconds) => {
     console.log('Top 5 most pieces placed:')
     console.log(best.map(b => b.validBoxes));
-    console.log(`Ended with ${count} attempts in 60 seconds`);
+    console.log(`Ended with ${count} attempts in ${seconds} seconds`);
     console.log(best[0].export());
   });
