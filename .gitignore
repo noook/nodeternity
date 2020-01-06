@@ -1,0 +1,9 @@
+.idea/
+.vscode/
+.env
+node_modules/
+dist
+pgdata
+tmp/
+temp/
+servers.txt

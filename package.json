@@ -1,0 +1,31 @@
+{
+   "name": "project-name",
+   "version": "1.0.0",
+   "description": "Project description",
+   "dependencies": {
+      "@types/dotenv": "^6.1.1",
+      "@types/lodash": "^4.14.149",
+      "@types/node": "^12.7.3",
+      "dotenv": "^8.0.0",
+      "lodash": "^4.17.15",
+      "module-alias": "^2.2.0",
+      "reflect-metadata": "^0.1.10",
+      "typescript": "^3.7.2"
+   },
+   "devDependencies": {
+      "nodemon": "^1.19.1",
+      "ts-loader": "^6.0.2",
+      "ts-node": "3.3.0"
+   },
+   "_moduleAliases": {
+      "@": "dist"
+   },
+   "scripts": {
+      "compile": "rm -r dist; tsc && node --inspect=0.0.0.0 dist/index.js",
+      "dev": "nodemon -e ts --exec \"npm run compile\"",
+      "start": "ts-node src/index.ts"
+   },
+   "keywords": [],
+   "author": "Neil Richter <me@neilrichter.com> (https://neilrichter.com/)",
+   "license": "ISC"
+}

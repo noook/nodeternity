@@ -1,0 +1,32 @@
+version: '2'
+services:
+  app:
+    build: .
+    restart: always
+    container_name: app
+    tty: true
+    command: npm run dev
+    volumes:
+      - .:/usr/app/
+      - /usr/app/node_modules
+    ports:
+      - 3003:3003
+      - 9229:9229
+    # depends_on:
+    #   - db
+    # links:
+    #   - db
+    environment:
+        NODE_ENV: ${NODE_ENV}
+#   db:
+#     container_name: db
+#     volumes:
+#       - ./pgdata:/var/lib/postgresql/data
+#     ports:
+#       - 5432:5432
+#     image: postgres:11.5
+#     environment:
+#         TZ: Europe/Paris
+#         POSTGRES_USER: ${DB_USER}
+#         POSTGRES_DB: ${DB_NAME}
+#         POSTGRES_PASSWORD: ${DB_PASSWORD}
