@@ -42,10 +42,13 @@ function run(seconds: number): Promise<number> {
   });
 }
 
-run(10)
-  .then((seconds) => {
-    console.log('Top 5 most pieces placed:')
-    console.log(best.map(b => b.validBoxes));
-    console.log(`Ended with ${count} attempts in ${seconds} seconds`);
-    console.log(best[0].export());
-  });
+// run(10)
+//   .then((seconds) => {
+//     console.log('Top 5 most pieces placed:')
+//     console.log(best.map(b => b.validBoxes));
+//     console.log(`Ended with ${count} attempts in ${seconds} seconds`);
+//     console.log(best[0].export());
+//   });
+
+test();
+console.log(best[0].output());

@@ -1,6 +1,6 @@
 // eslint-disable-next-line
 import { join } from 'path';
-import { readFileSync } from 'fs';
+import { readFileSync, fstat, writeFileSync } from 'fs';
 import Piece from './piece';
 import { shuffle, partition } from '@/utils';
 
@@ -306,6 +306,12 @@ export class Board {
 
     // eslint-disable-next-line
     return output.join("\n");
+  }
+
+  public output(): void {
+    if (this.validBoxes < 150) return;
+    const ouputFile = join(__dirname, '..', '..', 'outputs', `${this.validBoxes}.txt`);
+    writeFileSync(ouputFile, this.export());
   }
 
   public reset() {
