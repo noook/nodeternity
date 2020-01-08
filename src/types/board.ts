@@ -277,7 +277,7 @@ export class Board {
         if (box.piece.id === 0) {
           outputRow.push('X');
         } else {
-          outputRow.push(`${box.piece.id}(${box.piece.rotation})`);
+          outputRow.push(`${box.piece.id - 1}(${box.piece.rotation})`);
         }
       });
       output.push(outputRow.join('-'));

@@ -28,6 +28,7 @@ export default class Piece {
   }
 
   public rotate(times: number) {
+    if (times === 0) return;
     const copy = (({ ...props }) => props)(this);
 
     this.top = copy.left;

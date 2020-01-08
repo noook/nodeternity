@@ -20,8 +20,9 @@ function test(): void {
   const board = new Board(16, 16);
   const tried : number[] = [];
 
-  const middleIndex = pieces.findIndex(item => item.id === 139);;
-  board.setPiece(pieces.splice(middleIndex, 1)[0], 7, 8);
+  const middle = pieces.splice(pieces.findIndex(item => item.id === 139), 1)[0];
+  middle.rotate(2);
+  board.setPiece(middle, 7, 8);
   board.solve(pieces, tried);
   board.solveBorders(borders);
   addToScoreBoards(board);
@@ -30,6 +31,7 @@ function test(): void {
 let count = 0;
 
 function run(seconds: number): Promise<number> {
+  console.log(`Running for ${seconds} seconds...`);
   return new Promise(resolve => {
     const microtime = Date.now() / 1000;
     while ((Date.now() / 1000) - microtime < seconds) {
