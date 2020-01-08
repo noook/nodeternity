@@ -42,7 +42,7 @@ function run(seconds: number): Promise<number> {
   });
 }
 
-run(60)
+run(10)
   .then((seconds) => {
     console.log('Top 5 most pieces placed:')
     console.log(best.map(b => b.validBoxes));

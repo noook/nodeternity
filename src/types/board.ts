@@ -38,11 +38,13 @@ export class Box {
   }
 
   public isCorner(): boolean {
+    // 2 of coordinates are sides
     return [this.x === 0, this.y === 0, this.x === 15, this.y === 15]
       .filter(test => test === true).length > 1;
   }
 
   public isBorder(): this is EdgeBox {
+    // One of the coordinates is a side
     return this.x === 0 || this.y === 0 || this.x === 15 || this.y === 15;
   }
 }
@@ -69,6 +71,7 @@ export class Board {
   }
 
   public solve(pieces: Piece[], tried: number[]) {
+    // Solves the puzzle from the middle
     const box = this.closestEmptyCell(7, 8, tried);
     if (box === null) {
       return;
@@ -87,6 +90,7 @@ export class Board {
   }
 
   public solveBorders(borders: Piece[]) {
+    // Separates corners from edges
     const [corners, edges] = partition(borders, piece => piece.isCorner());
     this.setCorners(shuffle(corners) as [Piece, Piece, Piece, Piece]);
     this.solveEdges(edges);
@@ -107,6 +111,7 @@ export class Board {
 
   public setCorners(corners: [Piece, Piece, Piece, Piece]): this {
     const [topLeft, topRight, bottomLeft, bottomRight] = corners;
+    // Rotates corners in the right position
     while (!(topLeft.top === 0 && topLeft.left === 0)) {
       topLeft.rotate(1);
     }
@@ -130,21 +135,25 @@ export class Board {
   public closestEmptyCell(x: number, y: number, tried: number[]): Box | null {
     const maxRange = this.height > this.width ? this.height : this.width;
 
+    // rangeInc = circle radius lookup
     for (let rangeInc = 1; rangeInc <= maxRange / 2; rangeInc += 1) {
       for (let i = -1 * rangeInc; i <= rangeInc; i += 1) {
         for (let j = -1 * rangeInc; j <= rangeInc; j += 1) {
+          // Index out of range
           if (x + j < 0 || y + i < 0 || x + j > this.width || y + i > this.height) {
             continue;
           }
-
+          // Same
           if (!this.boxes[j + y][i + x]) {
             return null;
           }
 
+          // Borders are solved differently
           if (this.boxes[j + y][i + x].isBorder()) {
             continue;
           }
 
+          // If no piece around - Resolving is not interesting
           if (this.boxes[j + y - 1][i + x].piece.id === 0
             && this.boxes[j + y + 1][i + x].piece.id === 0
             && this.boxes[j + y][i + x - 1].piece.id === 0
@@ -156,6 +165,7 @@ export class Board {
             continue;
           }
 
+          // Found
           if (this.boxes[j + y][i + x].piece.id === 0) {
             return this.boxes[j + y][i + x];
           }
@@ -177,20 +187,27 @@ export class Board {
       right: true,
     };
 
+    // Checks position in all rotation possibilities
+    // Condition represents: Does the [position] piece exists? Yes: Is it an empty piece? No: ignore this side
     for (let i = 0; i < 4; i += 1) {
+      // Top
       if (this.boxes[box.y - 1][box.x] && this.boxes[box.y - 1][box.x].piece.id !== 0) {
         ok.top = this.boxes[box.y - 1][box.x].piece.bottom === piece.top;
       }
+      // Bottom
       if (this.boxes[box.y + 1][box.x] && this.boxes[box.y + 1][box.x].piece.id !== 0) {
         ok.bottom = this.boxes[box.y + 1][box.x].piece.top === piece.bottom;
       }
+      // Left
       if (this.boxes[box.y][box.x - 1] && this.boxes[box.y][box.x - 1].piece.id !== 0) {
         ok.left = this.boxes[box.y][box.x - 1].piece.right === piece.left;
       }
+      // Right
       if (this.boxes[box.y][box.x + 1] && this.boxes[box.y][box.x + 1].piece.id !== 0) {
         ok.right = this.boxes[box.y][box.x + 1].piece.left === piece.right;
       }
 
+      // Checks that all properties of ok are true.
       if (Object.values(ok).every(val => val === true)) {
         return true;
       }
@@ -252,6 +269,9 @@ export class Board {
       piece.rotate(1);
     }
 
+    /**
+     * @see this.assignPiece
+     */
     if (position !== 'top' && this.boxes[box.y - 1][box.x].piece.id !== 0) {
       ok.top = this.boxes[box.y - 1][box.x].piece.bottom === piece.top;
     }
@@ -277,6 +297,7 @@ export class Board {
         if (box.piece.id === 0) {
           outputRow.push('X');
         } else {
+          // Pieces were originally labelled 1 - 256 instead of 0 - 255
           outputRow.push(`${box.piece.id - 1}(${box.piece.rotation})`);
         }
       });

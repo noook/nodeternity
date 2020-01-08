@@ -24,10 +24,13 @@ export function random<T>(arr: T[]): T {
 
 export function sleep(timeout: number) {
   return new Promise((resolve) => {
-    setTimeout(() => resolve(), timeout);
+    setTimeout(resolve, timeout);
   });
 }
 
+/**
+ * Separates an array in two in function of the predicate passed.
+ */
 export function partition<T>(array: T[], predicate: (item: T) => Boolean): [T[], T[]] {
   const truthy: T[] = [];
   const falsey: T[] = [];
