@@ -1,8 +1,9 @@
 // eslint-disable-next-line
 import { join } from 'path';
-import { readFileSync, fstat, writeFileSync } from 'fs';
+import { readFileSync, writeFileSync } from 'fs';
 import Piece from './piece';
 import { shuffle, partition } from '@/utils';
+import { History } from './history';
 
 type EdgeBox = Box & {
   y: 0 | 15;
@@ -53,6 +54,8 @@ export class Board {
   public boxes: Box[][] = [];
   public width: number;
   public height: number;
+  private best: number = 0;
+  private history: History = [];
 
   public constructor(width: number, height: number) {
     this.width = width;
@@ -76,17 +79,19 @@ export class Board {
     if (box === null) {
       return;
     }
-    tried.push(box!.id);
+    tried.push(box.id);
 
     for (let i = 0; i < pieces.length; i += 1) {
       const assigned = this.assignPiece(box, pieces[i]);
 
       if (assigned) {
         this.setPiece(pieces.splice(i, 1)[0], box.x, box.y);
-        break;
+        this.output();
+        this.solve(pieces, tried);
+        const piece = this.removePiece(box.x, box.y);
+        pieces.push(piece);
       }
     }
-    this.solve(pieces, tried);
   }
 
   public solveBorders(borders: Piece[]) {
@@ -98,8 +103,32 @@ export class Board {
 
   public setPiece(piece: Piece, x: number, y: number): this {
     this.boxes[y][x].setPiece(piece);
+    this.history.push({
+      type: 'add',
+      piece: {
+        id: piece.id,
+        rotation: piece.rotation,
+        x, y,
+      },
+    });
 
     return this;
+  }
+
+  public removePiece(x: number, y: number): Piece {
+    const piece = this.boxes[y][x].piece;
+    this.boxes[y][x].piece = new Piece();
+
+    this.history.push({
+      type: 'remove',
+      piece: {
+        id: piece.id,
+        rotation: piece.rotation,
+        x, y,
+      },
+    });
+
+    return piece;
   }
 
   get validBoxes(): number {
@@ -132,7 +161,7 @@ export class Board {
     return this;
   }
 
-  public closestEmptyCell(x: number, y: number, tried: number[]): Box | null {
+  public closestEmptyCell(x: number, y: number, tried: number[] = []): Box | null {
     const maxRange = this.height > this.width ? this.height : this.width;
 
     // rangeInc = circle radius lookup
@@ -309,9 +338,15 @@ export class Board {
   }
 
   public output(): void {
-    if (this.validBoxes < 150) return;
+    if (this.validBoxes < 150 || this.validBoxes < this.best) {
+      return;
+    }
+    this.best = this.validBoxes;
+
     const ouputFile = join(__dirname, '..', '..', 'outputs', `${this.validBoxes}.txt`);
+    const outputHistoryFile = join(__dirname, '..', '..', 'history-output', `${this.validBoxes}.json`);
     writeFileSync(ouputFile, this.export());
+    writeFileSync(outputHistoryFile, JSON.stringify(this.history, undefined, 2));
   }
 
   public reset() {

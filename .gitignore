@@ -6,4 +6,5 @@ dist
 pgdata
 tmp/
 temp/
-servers.txt
+outputs
+history-output

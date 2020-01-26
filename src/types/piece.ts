@@ -10,6 +10,14 @@ interface PieceParams {
   left: number;
 }
 
+const pieceDefaultParams: PieceParams = {
+  id: 0,
+  top: 0,
+  bottom: 0,
+  right: 0,
+  left: 0,
+};
+
 export default class Piece {
   public id: number;
   public rotation: number;
@@ -18,7 +26,7 @@ export default class Piece {
   public right: number;
   public left: number;
 
-  public constructor(params: PieceParams) {
+  public constructor(params: PieceParams = pieceDefaultParams) {
     this.id = params.id;
     this.rotation = 0;
     this.top = params.top;
